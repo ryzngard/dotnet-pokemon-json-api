@@ -57,7 +57,6 @@ static IEnumerable<T> Paginate<T>(IEnumerable<T> entries, int page, int perPage)
     var showFrom = perPage * (page - 1);
     var showTo = showFrom + perPage;
 
-    var toTake = showTo - showFrom;
     return entries.Take(showFrom..showTo);
 }
 
