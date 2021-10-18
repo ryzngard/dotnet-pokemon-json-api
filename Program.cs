@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using Microsoft.OpenApi.Models;
 
 //
 // Initialize the builder for the server, which binds the URL that we will
@@ -8,12 +9,21 @@ using System.Text.Json.Nodes;
 //
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Api", Version = "v1" });
+});
+
 //
 // Look for static files in the webroot folder
 //
 builder.WebHost.UseWebRoot("webroot");
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
 
 //
 // Load the data from json
@@ -40,10 +50,10 @@ app.MapGet("/api/pokedex", (int? pageOpt, int? perPageOpt) => Paginate(pokemans,
 app.MapGet("/api/pokedex/all", () => pokemans);
 app.MapGet("/api/pokedex/{name}", (string name) => pokemans.FirstOrDefault(el => CompareName(el, name)));
 
-app.MapGet("/api/search", (string query, int? pageOpt, int? perPageOpt) => 
+app.MapGet("/api/search", (string query, int? pageOpt, int? perPageOpt) =>
 {
     var matching = pokemans.Where(el => ContainsName(el, query));
-                
+
     return Paginate(matching, pageOpt ?? 1, perPageOpt ?? 20);
 });
 app.Run();
@@ -74,16 +84,18 @@ static ImmutableArray<PokeDexEntry> FixImageLinks(IEnumerable<PokeDexEntry> curr
             var newVariations = new List<Variation>();
             foreach (var variation in entry.Variations)
             {
-                newVariations.Add(variation with {
+                newVariations.Add(variation with
+                {
                     Image = baseUrl + variation.Image
                 });
             }
 
-            builder.Add(entry with {
+            builder.Add(entry with
+            {
                 Variations = newVariations.ToArray()
             });
         }
-        else 
+        else
         {
             builder.Add(entry);
         }
@@ -97,15 +109,15 @@ static ImmutableArray<PokeDexEntry> FixImageLinks(IEnumerable<PokeDexEntry> curr
 // 
 
 record PokeDexEntry(
-    int Num, 
-    string Name, 
-    Variation[] Variations, 
+    int Num,
+    string Name,
+    Variation[] Variations,
     string Link);
 
 record Variation(
-    string Name, 
-    string Descriptions, 
-    string Image, 
+    string Name,
+    string Descriptions,
+    string Image,
     string[] Types,
     string Specie,
     double Height,
