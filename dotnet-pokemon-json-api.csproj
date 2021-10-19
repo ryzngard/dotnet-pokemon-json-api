@@ -10,4 +10,8 @@
   <ItemGroup>
     <EmbeddedResource Include="pokemon.json" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.2" />
+  </ItemGroup>  
 </Project>
