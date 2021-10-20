@@ -1,7 +1,6 @@
+using Microsoft.OpenApi.Models;
 using System.Collections.Immutable;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using Microsoft.OpenApi.Models;
 
 //
 // Initialize the builder for the server, which binds the URL that we will
@@ -102,34 +101,3 @@ static ImmutableArray<PokeDexEntry> FixImageLinks(IEnumerable<PokeDexEntry> curr
 
     return builder.ToImmutableArray();
 }
-
-//
-// Model Definitions
-// 
-
-record PokeDexEntry(
-    int Num,
-    string Name,
-    Variation[] Variations,
-    string Link);
-
-record Variation(
-    string Name,
-    string Descriptions,
-    string Image,
-    string[] Types,
-    string Specie,
-    double Height,
-    double Weight,
-    string[] Abilities,
-    Stats Stats,
-    string[] Evolutions);
-
-record Stats(
-    int Total,
-    int Hp,
-    int Attack,
-    int Defense,
-    int SpeedAttack,
-    int SpeedDefense,
-    int Speed);
